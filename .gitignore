@@ -1,0 +1,6 @@
+# PDF et images produits en testant
+*.pdf
+# Sorties des tests
+tests/sortie/
+# Aide-mémoire personnel (pas sur GitHub)
+PUBLIER.md

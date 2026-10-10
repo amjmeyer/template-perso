@@ -1,0 +1,124 @@
+#!/bin/bash
+# Tests du paquet, en trois groupes :
+#
+#   beta/       contrôle visuel : chaque fichier doit compiler sans erreur ni
+#               avertissement ; les PDF vont dans tests/sortie/ (ignorés par git)
+#   unitaires/  vérifications automatiques (assert) : un échec = une erreur
+#               de compilation, avec le message de l'assertion
+#   erreurs/    (facultatif) entrées invalides : chaque fichier doit
+#               ÉCHOUER, avec le message annoncé en première ligne
+#   modèle      template/main.typ, compilé tel quel (@preview/template-perso
+#               servi par un dossier de paquets local, tests/sortie/paquets)
+#
+#   tests/lancer.sh            → tous les tests
+#   tests/lancer.sh 06 41      → seulement les tests dont le nom commence ainsi
+#                                (dans chaque groupe)
+
+cd "$(dirname "$0")/.."
+
+# Compilateur : `typst` s'il est installé, sinon celui de l'extension Tinymist de VSCodium.
+if command -v typst > /dev/null; then
+  TYPST=typst
+else
+  TYPST=$(ls -d ~/.var/app/com.vscodium.codium/data/codium/extensions/myriad-dreamin.tinymist-*/out/tinymist | tail -1)
+  export TYPST_PACKAGE_CACHE_PATH=~/.var/app/com.vscodium.codium/cache/typst/packages
+fi
+
+# garder(nom) : vrai si aucun filtre, ou si le nom commence par l'un d'eux
+garder() {
+  [ ${#FILTRES[@]} -eq 0 ] && return 0
+  for p in "${FILTRES[@]}"; do [[ $1 == $p* ]] && return 0; done
+  return 1
+}
+FILTRES=("$@")
+ECHECS=0
+
+mkdir -p tests/sortie/paquets/preview/template-perso
+ln -sfn "$PWD" tests/sortie/paquets/preview/template-perso/0.1.0
+
+echo "== beta (contrôle visuel)"
+for f in tests/beta/*.typ; do
+  nom=$(basename "$f" .typ)
+  garder "$nom" || continue
+  messages=$("$TYPST" compile --root . "$f" "tests/sortie/$nom.pdf" 2>&1)
+  if echo "$messages" | grep -qi '^error'; then etat="ERREUR"; ECHECS=$((ECHECS + 1))
+  elif echo "$messages" | grep -qi '^warning'; then etat="avertissement"
+  else etat="ok"; fi
+  printf '%-36s %s\n' "$nom" "$etat"
+  if [ "$etat" != ok ]; then
+    echo "$messages" | grep -iE '^(error|warning)|^ *= hint' | head -4 | sed 's/^/    /'
+  fi
+done
+
+# Modèle de projet, avec l'import @preview/template-perso tel quel
+if garder modele; then
+  messages=$("$TYPST" compile --package-path tests/sortie/paquets template/main.typ tests/sortie/modele.pdf 2>&1)
+  if echo "$messages" | grep -qi '^error'; then
+    printf '%-36s %s\n' "modèle (template/main.typ)" "ERREUR"; ECHECS=$((ECHECS + 1))
+    echo "$messages" | grep -iE '^error|┌─' | head -2 | sed 's/^/    /'
+  else
+    printf '%-36s %s\n' "modèle (template/main.typ)" "ok"
+  fi
+fi
+
+# Exemples du README : extraits à chaque lancement (le README ne se périme
+# pas), l'import @preview remplacé par le src/ local
+if garder readme; then
+  python3 - > tests/sortie/readme.typ <<'PY'
+import re
+blocs = re.findall(r"```typ\n(.*?)```", open("README.md").read(), re.S)
+print('#import "/src/lib.typ": *')
+print('#set page(width: 18cm, height: auto, margin: 1cm)')
+for b in blocs:
+    print(re.sub(r'#import "@preview/template-perso:[^"]*": \*\n', "", b))
+    print("#line(length: 100%)")
+PY
+  messages=$("$TYPST" compile --root . tests/sortie/readme.typ tests/sortie/readme.pdf 2>&1)
+  if echo "$messages" | grep -qi '^error'; then
+    printf '%-36s %s\n' "readme (exemples)" "ERREUR"; ECHECS=$((ECHECS + 1))
+    echo "$messages" | grep -iE '^error|┌─' | head -2 | sed 's/^/    /'
+  else
+    printf '%-36s %s\n' "readme (exemples)" "ok"
+  fi
+fi
+
+echo "== unitaires"
+for f in tests/unitaires/*.typ; do
+  nom=$(basename "$f" .typ)
+  [ "$nom" = aide ] && continue
+  garder "$nom" || continue
+  debut=$(date +%s.%N)
+  messages=$("$TYPST" compile --root . "$f" "tests/sortie/u-$nom.pdf" 2>&1)
+  duree=$(LC_NUMERIC=C printf '%.1f' "$(echo "$(date +%s.%N) - $debut" | bc)" | tr . ,)
+  if echo "$messages" | grep -qi '^error'; then
+    printf '%-36s %s\n' "$nom" "ÉCHEC (${duree} s)"
+    ECHECS=$((ECHECS + 1))
+    echo "$messages" | grep -iE '^error|┌─' | head -2 | sed 's/^/    /'
+  else
+    printf '%-36s %s\n' "$nom" "ok (${duree} s)"
+  fi
+done
+
+echo "== erreurs attendues"
+for f in tests/erreurs/*.typ; do
+  [ -e "$f" ] || continue
+  nom=$(basename "$f" .typ)
+  garder "$nom" || continue
+  attendu=$(head -1 "$f" | sed 's|^// attendu : ||')
+  messages=$("$TYPST" compile --root . "$f" "tests/sortie/e-$nom.pdf" 2>&1)
+  if ! echo "$messages" | grep -qi '^error'; then
+    printf '%-36s %s\n' "$nom" "ÉCHEC : compile sans erreur"
+    ECHECS=$((ECHECS + 1))
+  elif echo "$messages" | grep -qF -- "$attendu"; then
+    printf '%-36s %s\n' "$nom" "ok"
+  else
+    printf '%-36s %s\n' "$nom" "ÉCHEC : autre message"
+    ECHECS=$((ECHECS + 1))
+    echo "    attendu : $attendu"
+    echo "$messages" | grep -i '^error' | head -1 | sed 's/^/    obtenu  : /'
+  fi
+done
+
+echo
+if [ $ECHECS -eq 0 ]; then echo "Tout est bon."; else echo "$ECHECS échec(s)."; fi
+exit $ECHECS

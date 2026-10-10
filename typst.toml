@@ -1,0 +1,20 @@
+[package]
+name = "template-perso"
+version = "0.1.0"
+entrypoint = "src/lib.typ"
+authors = ["Arthur Meyer"]
+license = "MIT"
+description = "French maths course notes with numbered boxes and chapters"
+keywords = [
+  "cours", "course notes", "mathématiques", "mathematics", "lycée",
+  "enseignement", "teaching", "boîtes", "theorion",
+]
+categories = ["layout", "components"]
+disciplines = ["education", "mathematics"]
+compiler = "0.13.0"
+exclude = ["docs/*", "tests/*", "PUBLIER.md", "CHANGELOG.md", "CLAUDE.md"]
+
+[template]
+path = "template"
+entrypoint = "main.typ"
+thumbnail = "thumbnail.png"
