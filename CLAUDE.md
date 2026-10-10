@@ -22,7 +22,9 @@ d'Arthur Meyer, tirée de son préambule personnel. Même organisation que
 
 - `src/` est relié par lien symbolique depuis
   `MATHEMATIQUES/PREAMBULE_PERSO_Typst/template-perso` ;
-  `PREAMBULE_GENERAL.typ` y est un **relais** : il importe theorion et les
+  `template-perso-dev.typ` (ex-`PREAMBULE_GENERAL.typ`) y est un **relais**,
+  importé par chaque cours (`#import "/PREAMBULE_PERSO_Typst/template-perso-dev.typ": *`) :
+  il importe theorion et les
   autres paquets des cours, puis ce paquet, et définit les réglages perso
   (`style` = `cours` avec les polices Kp et zero, `Brickred`…, `reponseM`,
   et la surcouche `seyes(…, afficher:)[corps]` / `corrige-actif` sur la
