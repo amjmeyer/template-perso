@@ -1,12 +1,11 @@
 // Tests unitaires de src/cours.typ et des petites fonctions (réponses,
-// fonction-accolade) : polices, page, listes, liens.
+// réponses encadrées) : polices, page, listes, liens.
 #import "aide.typ": *
 #import "/src/lib.typ": *
 
-// réponses et fonction-accolade
+// réponses
 #egal(texte(reponse[$x = 3$]), "x=3", quoi: "reponse")
 #egal(texte(reponse-maths($1/2$)), "(1)/(2)", quoi: "reponse-maths")
-#egal(texte($#fonction-accolade($f$, $RR$, $x$, $x^2$)$), "f→ℝx↦x^2", quoi: "fonction-accolade")
 
 // polices par défaut : New Computer Modern, texte et maths
 #[

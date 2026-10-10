@@ -16,7 +16,6 @@
 //   boites.typ    boîtes numérotées (definition, propriete…)
 //   titres.typ    chapitre, titres, table des matières
 //   reponses.typ  réponses encadrées
-//   maths.typ     écritures mathématiques
 
 #import "cours.typ": cours
 #import "boites.typ": (
@@ -32,5 +31,4 @@
 )
 #import "titres.typ": chapitre, toc, lettre-entouree
 #import "reponses.typ": reponse, reponse-maths
-#import "maths.typ": fonction-accolade
 #import "couleurs.typ": brick-red, forest-green

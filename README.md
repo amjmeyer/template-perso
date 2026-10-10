@@ -54,7 +54,6 @@ ou, dans un document existant :
 | `chapitre(titre, numéro, classe)` | en-tête de chapitre |
 | `toc()` | table des matières (`aeration:` pour l'espacement) |
 | `reponse[…]`, `reponse-maths(…)` | réponse encadrée sur fond jaune |
-| `fonction-accolade(f, A, x, fx)` | f : A → B et x ↦ f(x) sous une accolade |
 
 Clés de `cours` : `police` (défaut `"New Computer Modern"`), `police-maths`
 (`"New Computer Modern Math"`), `taille` (`10pt`), `langue` (`"fr"`). Par

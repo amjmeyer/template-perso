@@ -14,7 +14,7 @@
 
 #definition(title: "Fonction carré")[
   La fonction carré est la fonction $f$ définie sur $RR$ par $f(x) = x^2$ :
-  $ #fonction-accolade($f$, $RR$, $x$, $x^2$) $
+  $ cases(f : RR arrow.r RR, x arrow.r.bar x^2) $
 ]
 
 #propriete[

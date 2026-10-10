@@ -6,7 +6,8 @@
   `cours` (ex-`style`, polices réglables par les clés `police` et
   `police-maths`, New Computer Modern par défaut), neuf boîtes numérotées
   (une seule fabrique), `chapitre`, `toc`, `reponse`, `reponse-maths`
-  (ex-`reponseM`), `fonction-accolade`.
+  (ex-`reponseM`). `fonction-accolade`, simple raccourci de `cases`, reste
+  dans le relais personnel.
 - Zones Seyes et corrigés laissés à profmaquette-minimal (le mode
   `corrige()` et `exemple(afficher:)` du préambule, jamais utilisés, sont
   abandonnés ; `seyes(…, afficher:)[corps]` et `corrige-actif` restent dans

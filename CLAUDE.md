@@ -9,7 +9,7 @@ d'Arthur Meyer, tirée de son préambule personnel. Même organisation que
 - [src/lib.typ](src/lib.typ) — point d'entrée, ne fait qu'exporter.
 - [src/cours.typ](src/cours.typ) (`#show: cours`), [src/boites.typ](src/boites.typ)
   (boîtes theorion, une fabrique `_boite`), [src/titres.typ](src/titres.typ),
-  [src/reponses.typ](src/reponses.typ), [src/maths.typ](src/maths.typ),
+  [src/reponses.typ](src/reponses.typ),
   [src/couleurs.typ](src/couleurs.typ). Clés documentées en tête de chaque
   fichier : source de vérité.
 - [src/deps.typ](src/deps.typ) — seul endroit qui importe des paquets.
