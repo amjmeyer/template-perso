@@ -27,8 +27,8 @@ d'Arthur Meyer, tirée de son préambule personnel. Même organisation que
   il importe theorion et les
   autres paquets des cours, puis ce paquet, et définit les réglages perso
   (`style` = `cours` avec les polices Kp et zero, `Brickred`…, `reponseM`,
-  et la surcouche `seyes(…, afficher:)[corps]` / `corrige-actif` sur la
-  grille de profmaquette-minimal).
+  `fonction-accolade`, `corrige-actif`) ; `seyes` y vient de
+  profmaquette-minimal (relais `profmaquette-dev.typ`, clé `afficher`).
   Toute modification de `src/` s'applique aussitôt aux 55 cours.
 - Avant/après une modification qui touche au rendu : compiler les cours et
   comparer les images (la réorganisation initiale a été validée au pixel près
